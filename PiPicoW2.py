@@ -27,7 +27,7 @@ topic_camara_rx = b'sscma/v0/xiao_esp32_air_control_1/rx'
 
 topic_personas = topic_camara_tx
 topic_target_temp = b'target_temp'
-topic_actual_temp = b'actual_temp'
+#topic_actual_temp = b'actual_temp'
 topic_estado = b'air_control/status'
 
 
@@ -69,7 +69,7 @@ sensor_temp = machine.ADC(machine.ADC.CORE_TEMP)
 INTERVALO_LECTURA_TEMP = 5
 POTENCIA_MAXIMA = 10
 FACTOR_TEMPERATURA = 2.0
-FACTOR_PERSONAS = 0.5
+FACTOR_PERSONAS = 0.5 # Valor tomado par ver funcionamiento con pocas  personas
 MARGEN_TEMPERATURA = 0.3
 
 # ==========================================
@@ -204,13 +204,6 @@ def leer_actual_temp():
     temperatura = 27 - (reading - 0.706)/0.001721 
     return temperatura
 
-def publicar_actual_temp(temp):
-    global client
-    
-    if client is not None and temp is not None:
-        temp_redondeada = round(temp, 2)
-        client.publish(topic_actual_temp, str(temp_redondeada).encode('utf-8'), retain=False)
-
 def calcular_potencia(num_personas, actual_temp, target_temp):
     if actual_temp is None:
         return 0
@@ -277,7 +270,6 @@ def aplicar_control():
         personas_actuales = num_personas
         objetivo_actual = target_temp
 
-        publicar_actual_temp(temp_leida)
         nueva_potencia = calcular_potencia(personas_actuales, temp_leida, objetivo_actual)
 
         if nueva_potencia != potencia_actual:
@@ -458,7 +450,6 @@ while True:
             if not manual:
                 aplicar_control()
             else:
-                publicar_actual_temp(temp_leida)
                 publicar_estado()
 
             ultimo_tiempo_temp = tiempo_actual
