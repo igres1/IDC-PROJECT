@@ -46,7 +46,7 @@ fallo = False
 
 
 # ==========================
-# WATCHDOG (PERRO GUARDIÁN)
+# WATCHDOG (Vigila a ver si ocurre un evento)
 # ==========================
 
 def watchdog_temperatura():
